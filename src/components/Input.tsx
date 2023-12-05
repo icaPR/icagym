@@ -1,6 +1,6 @@
 import { Input as NativeBaseInput, IInputProps } from "native-base";
 
-export function Input({ ...resy }: IInputProps) {
+export function Input({ ...rest }: IInputProps) {
   return (
     <NativeBaseInput
       bg="gray.700"
@@ -17,7 +17,7 @@ export function Input({ ...resy }: IInputProps) {
         borderWidth: 1,
         borderColor: "green.500",
       }}
-      {...resy}
+      {...rest}
     />
   );
 }
