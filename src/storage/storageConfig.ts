@@ -1,3 +1,4 @@
-const USER_STorage = "@icagym:user";
+const USER_STORAGE = "@icagym:user";
+const AUTH_TOKEN_STORAGE = "@icagym:token";
 
-export { USER_STorage };
+export { USER_STORAGE, AUTH_TOKEN_STORAGE };
