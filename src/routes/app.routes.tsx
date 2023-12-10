@@ -11,12 +11,13 @@ import { Exercise } from "@screens/Exercise";
 import { History } from "@screens/History";
 import { Home } from "@screens/Home";
 import { Profile } from "@screens/Profile";
+import { ExerciseDTO } from "@dtos/ExerciseDTO";
 
 type AppRoutes = {
   home: undefined;
   history: undefined;
   profile: undefined;
-  exercise: undefined;
+  exercise: { exerciseId: string };
 };
 
 export type AppNavigatorRoutesProps = BottomTabNavigationProp<AppRoutes>;
