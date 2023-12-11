@@ -1,10 +1,16 @@
 import { HStack, VStack, Heading, Image, Text, Icon } from "native-base";
 import { TouchableOpacity, TouchableOpacityProps } from "react-native";
 import { Entypo } from "@expo/vector-icons";
+import { ExerciseDTO } from "@dtos/ExerciseDTO";
+import { api } from "@services/api";
 
-type Props = TouchableOpacityProps & {};
+type Props = TouchableOpacityProps & {
+  data: ExerciseDTO;
+};
 
-export function ExerciseCard({ ...rest }: Props) {
+export function ExerciseCard({ data, ...rest }: Props) {
+  const response = api;
+
   return (
     <TouchableOpacity {...rest}>
       <HStack
@@ -17,9 +23,9 @@ export function ExerciseCard({ ...rest }: Props) {
       >
         <Image
           source={{
-            uri: "https://www.dicasdeacademia.com.br/wp-content/uploads/2023/06/supino-reto-768x421.webp",
+            uri: `${api.defaults.baseURL}/exercise/thumb/${data.thumb}`,
           }}
-          alt="Imagem do supino"
+          alt="Imagem do exercício"
           w={16}
           h={16}
           rounded="md"
@@ -28,10 +34,10 @@ export function ExerciseCard({ ...rest }: Props) {
         />
         <VStack flex={1}>
           <Heading fontSize="lg" color="white" fontFamily="heading">
-            Supino reto
+            {data.name}
           </Heading>
           <Text fontSize="sm" color="gray.200" mt={1} numberOfLines={2}>
-            4 séries x 10 repetições
+            {data.series} séries x {data.repetitions} repetições
           </Text>
         </VStack>
         <Icon as={Entypo} name="chevron-thin-right" color="gray.300" />
