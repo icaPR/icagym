@@ -16,6 +16,7 @@ export type AuthContextDataProps = {
   user: UserDTO;
   signIn: (email: string, password: string) => Promise<void>;
   signOut: () => Promise<void>;
+  updateUserProfile: (userUpdate: UserDTO) => Promise<void>;
   isLoadingUser: boolean;
 };
 
@@ -44,13 +45,20 @@ export function AuthContextProvider({ children }: AuthContextProviderProps) {
   }
   async function updateUserAndToken(userData: UserDTO, token: string) {
     try {
-      api.defaults.headers.common["Authorization"] = `Bearer${token}`;
+      api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
       setUser(userData);
     } catch (error) {
       throw error;
     }
   }
-
+  async function updateUserProfile(userUpdate: UserDTO) {
+    try {
+      setUser(userUpdate);
+      await storageUserSave(userUpdate);
+    } catch (error) {
+      throw error;
+    }
+  }
   async function signIn(email: string, password: string) {
     try {
       const { data } = await api.post("/sessions", { email, password });
@@ -102,6 +110,7 @@ export function AuthContextProvider({ children }: AuthContextProviderProps) {
         signIn,
         signOut,
         isLoadingUser,
+        updateUserProfile,
       }}
     >
       {children}
