@@ -32,11 +32,15 @@ export function AuthContextProvider({ children }: AuthContextProviderProps) {
   const [user, setUser] = useState<UserDTO>({} as UserDTO);
   const [isLoadingUser, setIsLoadingUser] = useState(true);
 
-  async function saveUserAndToken(user: UserDTO, token: string) {
+  async function saveUserAndToken(
+    user: UserDTO,
+    token: string,
+    refresh_token: string
+  ) {
     try {
       setIsLoadingUser(true);
       await storageUserSave(user);
-      await storageAuthTokenSave(token);
+      await storageAuthTokenSave({ token, refresh_token });
     } catch (error) {
       throw error;
     } finally {
@@ -62,8 +66,8 @@ export function AuthContextProvider({ children }: AuthContextProviderProps) {
   async function signIn(email: string, password: string) {
     try {
       const { data } = await api.post("/sessions", { email, password });
-      if (data.user && data.token) {
-        await saveUserAndToken(data.user, data.token);
+      if (data.user && data.token && data.refresh_token) {
+        await saveUserAndToken(data.user, data.token, data.refresh_token);
         updateUserAndToken(data.user, data.token);
       }
     } catch (error) {
@@ -82,12 +86,11 @@ export function AuthContextProvider({ children }: AuthContextProviderProps) {
       setIsLoadingUser(false);
     }
   }
-
   async function localUserData() {
     try {
       setIsLoadingUser(true);
       const userLogged = await storageUserGet();
-      const token = await storageAuthTokenGet();
+      const { token } = await storageAuthTokenGet();
 
       if (token && userLogged) {
         updateUserAndToken(userLogged, token);
@@ -102,6 +105,13 @@ export function AuthContextProvider({ children }: AuthContextProviderProps) {
   useEffect(() => {
     localUserData();
   }, []);
+
+  useEffect(() => {
+    const subscribe = api.registerInterceptTokenManager(signOut);
+    return () => {
+      subscribe();
+    };
+  }, [signOut]);
 
   return (
     <AuthContext.Provider
